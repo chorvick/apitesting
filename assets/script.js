@@ -35,29 +35,47 @@ ajax_get('https://api.thecatapi.com/v1/images/search?size=full', function (data)
 
 ////////dog api
 
-function ajax_get(url2, callback) {
-    var xmlhttp = new XMLHttpRequest();
-    xmlhttp.onreadystatechange = function () {
-        if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
-            console.log('responseText:' + xmlhttp.responseText);
-            try {
-                var data = JSON.parse(xmlhttp.responseText);
-            } catch (err) {
-                console.log(err.message + " in " + xmlhttp.responseText);
-                return;
-            }
-            callback(data);
+const BREEDS_URL = 'https://dog.ceo/api/breeds/list/all';
+
+const select = document.querySelector('.breeds');
+
+fetch(BREEDS_URL)
+    .then(res => {
+        return res.json();
+    })
+    .then(data => {
+        const breedsObject = data.message;
+        const breedsArray = Object.keys(breedsObject);
+        for (let i = 0; i < breedsArray.length; i++) {
+            const option = document.createElement('option');
+            option.value = breedsArray[i];
+            option.innerText = breedsArray[i];
+            select.appendChild(option);
         }
-    };
+        console.log(breedsArray);
+    });
 
-    xmlhttp.open("GET", url2, true);
-    xmlhttp.send();
-}
+select.addEventListener('change', event => {
+    let url = `https://dog.ceo/api/breed/${event.target.value}/images/random`;
+    getDoggo(url);
+});
 
-ajax_get('https://dog.ceo/api/breeds/image/random', function (data) {
-    document.getElementById("dogid").innerHTML = data["dog"];
-    document.getElementById("dogurl").innerHTML = data["dog"];
+const img = document.querySelector('.dog-img');
+const spinner = document.querySelector('.spinner');
 
-    var html = '<img src="' + data + '">';
-    document.getElementById("dogimage").innerHTML = html;
+const getDoggo = url => {
+    spinner.classList.add('show');
+    img.classList.remove('show');
+    fetch(url)
+        .then(res => {
+            return res.json();
+        })
+        .then(data => {
+            img.src = data.message;
+        });
+};
+
+img.addEventListener('load', () => {
+    spinner.classList.remove('show');
+    img.classList.add('show');
 });
