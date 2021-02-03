@@ -55,8 +55,8 @@ function ajax_get(url2, callback) {
 }
 
 ajax_get('https://dog.ceo/api/breeds/image/random', function (data) {
-    document.getElementById("dogid").innerHTML = data2["dog"];
-    document.getElementById("dogurl").innerHTML = data2["dog"];
+    document.getElementById("dogid").innerHTML = data["dog"];
+    document.getElementById("dogurl").innerHTML = data["dog"];
 
     var html = '<img src="' + data + '">';
     document.getElementById("dogimage").innerHTML = html;
